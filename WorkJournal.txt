@@ -1,0 +1,36 @@
+importing data
+    importing all_sessions csv
+        column 'productRefundAmount' has no values. Not including in import.
+        column 'itemQuantity' has no values. not including in import
+        column 'itemRevenue' has no values. not including in import
+        column 'searchKeyword' has no values. not including in import
+        checking columns that look like they could be primary keys for dupes in the csv
+            all have dupes, creating serial 'session_id'
+    IMPORTED
+
+    importing analytics csv
+        file is too large to save
+        column 'userid' has no values. can't edit the csv but so it will have to stay in
+        no column without dupes, creating serial 'analytics_id'
+    IMPORTED
+
+    importing sales_report csv
+        no unique column for primary key, creating 'sales_report_id'
+    IMPORTED
+
+    importing sales_by_SKU csv
+        ProductSKU as PK 
+    IMPORTED
+
+    importing products csv
+        SKU as PK
+    IMPORTED
+
+
+
+
+    
+
+    
+
+    
