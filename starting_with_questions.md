@@ -85,7 +85,7 @@ FROM country_clean
 JOIN all_sessions USING(country)
 JOIN sales_report USING(productsku)
 JOIN products ON sales_report.productsku = sku
-WHERE total_ordered >0
+WHERE total_ordered >0 AND country IS NOT NULL
 GROUP BY country_clean
 ORDER BY total_ordered DESC
 
@@ -428,9 +428,141 @@ Countries
 
 SQL Queries:
 
+ --- Cities
+
+WITH --- remove nulls from cities and categories
+cities_categories_NOT_NULL_all_sessions AS (
+    SELECT CASE
+            WHEN all_sessions.v2productcategory IN ('${escCatTitle}', '(not set)') THEN NULL
+            ELSE all_sessions.v2productcategory
+        END as v2productcategory,
+        CASE
+            WHEN all_sessions.city IN ('(not set)', 'not available in demo dataset') THEN NULL
+            ELSE all_sessions.city
+        END as city
+    FROM all_sessions
+    WHERE all_sessions.city IS NOT NULL
+        AND all_sessions.v2productcategory IS NOT NULL
+),
+--- rank categories based on total products from that category sold in each city
+ranked_categories_w_cities AS(
+    SELECT DISTINCT cities_categories_NOT_NULL_all_sessions.city,
+        cities_categories_NOT_NULL_all_sessions.v2productcategory,
+        RANK () OVER(
+            PARTITION BY cities_categories_NOT_NULL_all_sessions.city
+            ORDER BY SUM(sales_report.total_ordered)
+        ),
+        SUM(sales_report.total_ordered) as total_ordered
+    FROM all_sessions
+        JOIN products ON all_sessions.productsku = products.sku
+        JOIN sales_report on all_sessions.productsku = sales_report.productsku
+        JOIN cities_categories_NOT_NULL_all_sessions ON all_sessions.city = cities_categories_NOT_NULL_all_sessions.city
+    GROUP BY cities_categories_NOT_NULL_all_sessions.city,
+        cities_categories_NOT_NULL_all_sessions.v2productcategory
+    ORDER BY rank,
+        cities_categories_NOT_NULL_all_sessions.city
+),
+
+--- limit the results to only the top most ranked categories
+rank1_cities AS (
+SELECT DISTINCT ranked_categories_w_cities.rank,
+    ranked_categories_w_cities.v2productcategory,
+    ranked_categories_w_cities.city
+FROM ranked_categories_w_cities
+WHERE ranked_categories_w_cities.rank = 1
+    AND ranked_categories_w_cities.v2productcategory IS NOT NULL
+ORDER BY ranked_categories_w_cities.city,
+    ranked_categories_w_cities.rank
+)
+
+SELECT
+
+(SELECT COUNT(rank1_cities.v2productcategory)
+FROM rank1_cities
+WHERE rank1_cities.v2productcategory LIKE 'Home/Apparel%') AS Apparel,
+
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Accessories%') AS Accessories
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Bags%') AS Bags
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Brands%') AS Brands
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Clearance%') AS Clearance
+    ,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Drinkware%') AS Drinkware
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Electronices%') AS Electronices
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Fruit%') AS FruitGames
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Fun%') AS Fun
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Gift%') AS GiftCards
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Kids%') AS Kids
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Lifestyle%') AS Lifestyle
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Limited%') AS LimitedSupply
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Nest%') AS Nest
+,
+(
+    SELECT COUNT(rank1_cities.v2productcategory)
+    FROM rank1_cities
+    WHERE rank1_cities.v2productcategory LIKE 'Home/Office%') AS Office 
+FROM rank1_cities
+Limit 1
 
 
 Answer:
+Cities
+Started by finding top 3 ranked categories in each city. Lowered that to 1 due to many categories being tied for ranks. Apperel is the most common top product category by roughly 200.
+
+Countries
+I reused the same query as cities to find the most common top product category for countries. Apparel is also the most common product catergory among countries. This time by aroughly 100. 
+
+The second most common for both cities and countries was accessories. The rest of the catagories were significantly lower. The 3rd most common for both were roughly half of accessories.
+
 
 
 

@@ -46,12 +46,14 @@ Questions and cleaning
         
        
     3
-        pattern in types of products ordered in cities and countries
+        pattern in types of product catergories ordered in cities and countries
         
-        top 3 product from each city (264 cities)
-        top 3 product from each country (153 countries)
+        top 1 product catergories from each city (264 cities)
+        top 3 product catergories from each country (153 countries)
 
         compare
+            looking at cities there are a lot of ties for rank 1 in almost every city. 
+            look at most common category over all cities
 
                     
 
