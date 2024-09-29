@@ -1,8 +1,32 @@
 What issues will you address by cleaning the data?
 
+Missing city values
 
 
+    SELECT CASE
+            WHEN city IN ('(not set)', 'not available in demo dataset') THEN NULL
+            ELSE city
+        END
+    FROM all_sessions
+
+---
+
+Missing country values
 
 
-Queries:
-Below, provide the SQL queries you used to clean your data.
+    SELECT CASE
+            WHEN country IN ('(not set)', 'not available in demo dataset') THEN NULL
+            ELSE country
+        END
+    FROM all_sessions
+
+---
+
+Remove Nulls from productquantity
+
+    SELECT productquantity
+    FROM all_sessions
+    WHERE productquantity IS NOT NULL
+
+---
+
