@@ -38,44 +38,20 @@ Questions and cleaning
             group by city or country
             sum of transaction rev > 0
             limit 10
-        sunnyvale with 200000000
-        US with 2390950000
-
     2
-        avg num of products ordered from visitors in each city and country
-            avg then roud product quantity
-            group by city/country without nulls
-        cities
-            1.00	"San Jose"
-            8.00	"Salem"
-            1.17	"New York"
-            1.00	"San Francisco"
-            1.00	"Dallas"
-            1.00	"Dublin"
-            1.00	"Palo Alto"
-            1.00	"Chicago"
-            2.00	"Houston"
-            1.00	"Seattle"
-            1.00	"Columbus"
-            1.00	"Los Angeles"
-            1.00	"Ann Arbor"
-            1.00	"Mountain View"
-            1.00	"Detroit"
-            1.00	"Bengaluru"
-            1.00	"Sunnyvale"
-            10.00	"Madrid"
-            4.00	"Atlanta"
-        countries
-            1.00	"Ireland"
-            1.00	"Finland"
-            1.00	"Colombia"
-            1.00	"France"
-            4.02	"United States"
-            10.00	"Spain"
-            1.00	"Canada"
-            1.00	"Argentina"
-            1.00	"India"
-            1.00	"Mexico"
+        avg num of products ordered from visitors in each city/country
+            avg then roud product total ordered from sales_report
+            group by city/country from all_sessions without nulls
+
+        
+       
+    3
+        pattern in types of products ordered in cities and countries
+        
+        top 3 product from each city (264 cities)
+        top 3 product from each country (153 countries)
+
+        compare
 
                     
 
