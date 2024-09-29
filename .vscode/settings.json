@@ -35,10 +35,10 @@
             "server": "localhost",
             "port": 5432,
             "driver": "PostgreSQL",
-            "name": "ecommerce",
-            "password": "!V46*aMKyq8K&fEim!Lj",
+            "name": "LHL SQL Project (ecommerce)",
+            "database": "ecommerce",
             "username": "postgres",
-            "database": "ecommerce"
+            "password": "!V46*aMKyq8K&fEim!Lj"
         }
     ]
 }
