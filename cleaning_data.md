@@ -33,17 +33,14 @@ Where country IS NULL
 
 Remove NULLs from productquantity
 
-    SELECT productquantity
-    FROM all_sessions
-    WHERE productquantity IS NOT NULL
-
+DELETE FROM all_sessions
+WHERE productquantity IS NULL
 ---
 
 Removing all rows that don't have a product category
 
-SELECT v2productname, v2productcategory
-FROM all_sessions
-WHERE v2productcategory NOT IN ('(not set)','${escCatTitle}')
+DELETE FROM all_sessions
+WHERE v2productcategory IN ('(not set)', '${escCatTitle}') 
 
 ---
 
@@ -59,8 +56,9 @@ FROM all_sessions
 Where city = 'Mountain View'
 
 
+
 UPDATE all_sessions
-SET city = CASE
+SET country = CASE
         WHEN city = 'San Francisco' THEN 'United States'
         WHEN city = 'Dublin' THEN 'Ireland'
         WHEN city = 'Watford' THEN 'United Kingdom'
@@ -106,7 +104,20 @@ WHERE timeonsite IS NULL
 remove all analytics.timeonsite = NULL
 If they spent no time on the site, thier info isn't useful
 
+DELETE FROM analytics
+WHERE timeonsite IS NULL
 
 ---
+
+Remove all sessions without catergories
+
+
+DELETE FROM all_sessions
+WHERE v2productcategory IN ('(not set)', '${escCatTitle}')
+
+---
+
+
+
 
 

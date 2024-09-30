@@ -72,6 +72,18 @@ Questions
         add products.name
 
     5
+        
+
+
+
+Reclean all_sessions
+    at somepoint I messed the data up very badly. need to reimport and reclean
+
+Double check questions 1-4 with newly cleaned data and update doc
+
+Back to questions
+
+    5
         summarize impact of revenue of each city and country
 
         find percentage each city contributes to that country
@@ -83,11 +95,11 @@ Questions
             rank by percentage for each country
             rank by percentage overall
 
-        which cities and countries generate the most revenue?
-        which cities and countries generate the least revenue?
+        cal city revenue
+        cal country
+        cal total revenue
 
-            use cals from above for raw rev not percent
-            rank, select the max and min overall
+        percentages (function?)
 
 
 
