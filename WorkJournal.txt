@@ -31,7 +31,13 @@ setting up constraints
     forgien keys
         SKU
 
-Questions and cleaning
+Cleaning 
+    all_sessions
+        cities and countries
+            corrected mismatched cities and countries
+            
+
+Questions
     1
         cities and countries w/ highest transaction rev
             rank by transaction rev
@@ -54,6 +60,38 @@ Questions and cleaning
         compare
             looking at cities there are a lot of ties for rank 1 in almost every city. 
             look at most common category over all cities
+            find most common cat 
+
+            repeat for countries
+
+    4
+        top selling product from each city/country
+        is there a appttern?
+
+        rank by sum(total_ordered) from sales_report and GROUP BY DISTINCT city/country
+        add products.name
+
+    5
+        summarize impact of revenue of each city and country
+
+        find percentage each city contributes to that country
+        find percentage each country contributes over all
+
+            city percent = city rev/country rev
+            country percent = country rev/ total rev
+
+            rank by percentage for each country
+            rank by percentage overall
+
+        which cities and countries generate the most revenue?
+        which cities and countries generate the least revenue?
+
+            use cals from above for raw rev not percent
+            rank, select the max and min overall
+
+
+
+
 
                     
 

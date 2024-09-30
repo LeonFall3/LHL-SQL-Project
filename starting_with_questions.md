@@ -573,10 +573,79 @@ The second most common for both cities and countries was accessories. The rest o
 
 SQL Queries:
 
+--- Cities (Code reused for Countries by swaping out 'city' or 'cities' for 'country' and 'countries')
+
+WITH
+--cleaning city
+clean_city AS (SELECT CASE
+        WHEN city IN ('(not set)', 'not available in demo dataset') THEN NULL
+        ELSE city
+    END as city
+FROM all_sessions
+WHERE city IS NOT NULL),
+
+
+-- total sales per product and city
+totalOrderedByCityProductsku AS (
+    SELECT city,
+        productsku,
+        sum(total_ordered) AS total_ordered
+    FROM sales_by_sku
+        JOIN all_sessions USING(productsku)
+    GROUP BY city,
+        productsku
+),
+
+--rank sales by product & city
+
+rankedSalesByProductCity AS (
+    SELECT CASE
+    WHEN city IN ('(not set)', 'not available in demo dataset') THEN NULL
+    ELSE city
+END as city, productsku, RANK () OVER(PARTITION BY city ORDER BY total_ordered DESC) as rank
+    FROM totalOrderedByCityProductsku
+    Order By city)
+
+-- adding names of products and only asking for rank 1s for each city
+    SELECT city, products.name as product_name
+    FROM rankedSalesByProductCity
+    JOIN products ON productsku = sku
+    WHERE rank =1
+
 
 
 Answer:
 
+Cities (limited to 10 as example of the results)
+
+    "Adelaide"	" Men's Watershed Full Zip Hoodie Grey"
+    "Ahmedabad"	" Canvas Tote Natural/Navy"
+    "Akron"	" Men's 100% Cotton Short Sleeve Hero Tee Navy"
+    "Amsterdam"	" Hard Cover Journal"
+    "Ann Arbor"	"Foam Can and Bottle Cooler"
+    "Antwerp"	"Colored Pencil Set"
+    "Ashburn"	"Compact Selfie Stick"
+    "Asuncion"	" Men's 100% Cotton Short Sleeve Hero Tee Navy"
+    "Athens"	" Hard Cover Journal"
+    "Atlanta"	" Protect Smoke + CO White Wired Alarm-USA"
+
+    Like we saw before, most top sellers are apperel products.  
+
+
+Countries (limited to 10 as example of the results)
+
+    "Albania"	"22 oz  Bottle Infuser"
+    "Algeria"	" Twill Cap"
+    "Argentina"	" Hard Cover Journal"
+    "Armenia"	"Windup Android"
+    "Australia"	" Hard Cover Journal"
+    "Austria"	" Custom Decals"
+    "Bahamas"	" Twill Cap"
+    "Bahrain"	" Men's 100% Cotton Short Sleeve Hero Tee White"
+    "Bangladesh"	"Keyboard DOT Sticker"
+    "Belarus"	" Women's Performance Full Zip Jacket Black"
+
+    Like we saw before, most top sellers are apperel products.
 
 
 

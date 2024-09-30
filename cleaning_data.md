@@ -3,22 +3,31 @@ What issues will you address by cleaning the data?
 Missing city values
 
 
-    SELECT CASE
-            WHEN city IN ('(not set)', 'not available in demo dataset') THEN NULL
-            ELSE city
-        END
-    FROM all_sessions
+  UPDATE all_sessions
+Set city = CASE
+WHEN city in('(not set)', 'not available in demo dataset') THEN NULL
+ELSE city
+END
+
+
+Delete from all_sessions
+Where city IS NULL
 
 ---
 
 Missing country values
 
+UPDATE all_sessions
+Set country = CASE
+WHEN country in('(not set)', 'not available in demo dataset') THEN NULL
+ELSE country
+END
 
-    SELECT CASE
-            WHEN country IN ('(not set)', 'not available in demo dataset') THEN NULL
-            ELSE country
-        END
-    FROM all_sessions
+
+Delete from all_sessions
+Where country IS NULL
+
+
 
 ---
 
@@ -38,25 +47,66 @@ WHERE v2productcategory NOT IN ('(not set)','${escCatTitle}')
 
 ---
 
-CTE to remove all NULLs from cities and catergories (later also used for countries and catergories by swapping 'city' to 'countyry)
+-- check number of countries which city has. Double check if all those countries have a city by that name. If not update name with correct country.
 
---- remove nulls from cities and categories
-cities_categories_NOT_NULL_all_sessions AS (
-    SELECT CASE
-            WHEN all_sessions.v2productcategory IN ('${escCatTitle}', '(not set)') THEN NULL
-            ELSE all_sessions.v2productcategory
-        END as v2productcategory,
-        CASE
-            WHEN all_sessions.city IN ('(not set)', 'not available in demo dataset') THEN NULL
-            ELSE all_sessions.city
-        END as city
-    FROM all_sessions
-    WHERE all_sessions.city IS NOT NULL
-        AND all_sessions.v2productcategory IS NOT NULL
-)
+SELECT city,
+    COUNT(DISTINCT country)
+FROM all_sessions
+GROUP BY city
+
+SELECT city, country
+FROM all_sessions
+Where city = 'Mountain View'
+
+
+UPDATE all_sessions
+SET city = CASE
+        WHEN city = 'San Francisco' THEN 'United States'
+        WHEN city = 'Dublin' THEN 'Ireland'
+        WHEN city = 'Watford' THEN 'United Kingdom'
+        WHEN city = 'New York' THEN 'United States'
+        WHEN city = 'Coventry' THEN 'United Kingdom'
+        WHEN city = 'Mexico City' THEN 'Mexico'
+        WHEN city = 'Hong Kong' THEN 'Hong Kong'
+        WHEN city = 'Singapore' THEN 'Singapore'
+        WHEN city = 'Bangkok' THEN 'Thailand'
+        WHEN city = 'Los Angeles' THEN 'United States'
+        WHEN city = 'Yokohama' THEN 'Japan'
+        WHEN city = 'Amsterdam' THEN 'Netherlands'
+        WHEN city = 'Istanbul' THEN 'Turkey'
+        WHEN city = 'London' THEN 'United Kingdom'
+        WHEN city = 'Mountain View' THEN 'United States'
+        ELSE city
+    END;
+
+
+---
+
+Update all_sessions.time into seconds for easier reading
+
+ALTER TABLE all_sessions
+ALTER COLUMN time TYPE real
+
+UPDATE all_sessions
+SET time = time / 1000
+
 
 ---
 
 
+remove all all_sessions.timeonsite = NULL
+If they spent no time on the site, thier info isn't useful
+
+DELETE FROM all_sessions
+WHERE timeonsite IS NULL
+
+
+---
+
+remove all analytics.timeonsite = NULL
+If they spent no time on the site, thier info isn't useful
+
+
+---
 
 
