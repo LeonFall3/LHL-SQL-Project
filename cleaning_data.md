@@ -3,7 +3,7 @@ What issues will you address by cleaning the data?
 Missing city values
 
 
-  UPDATE all_sessions
+UPDATE all_sessions
 Set city = CASE
 WHEN city in('(not set)', 'not available in demo dataset') THEN NULL
 ELSE city
@@ -35,6 +35,7 @@ Remove NULLs from productquantity
 
 DELETE FROM all_sessions
 WHERE productquantity IS NULL
+
 ---
 
 Removing all rows that don't have a product category
@@ -74,7 +75,7 @@ SET country = CASE
         WHEN city = 'Istanbul' THEN 'Turkey'
         WHEN city = 'London' THEN 'United Kingdom'
         WHEN city = 'Mountain View' THEN 'United States'
-        ELSE city
+        ELSE country
     END;
 
 

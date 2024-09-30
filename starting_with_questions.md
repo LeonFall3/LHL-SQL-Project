@@ -7,34 +7,43 @@ Answer the following questions and provide the SQL queries used to find the answ
 SQL Queries:
 -- Cities with the most transaction revenue
 SELECT city,
-    sum(transactionrevenue) as sum_transact_rev,
+    sum(totaltransactionrevenue) as sum_transact_rev,
     RANK() OVER (
-        ORDER BY sum(transactionrevenue)
+        ORDER BY sum(totaltransactionrevenue)
     )
 FROM all_sessions
 GROUP BY city
-HAVING sum(transactionrevenue) > 0
+HAVING sum(totaltransactionrevenue) > 0
+
+--- 
 
 --- Countries with the most transaction revenue
 
 SELECT country,
-    sum(transactionrevenue) as sum_transact_rev,
+    sum(totaltransactionrevenue) as sum_transact_rev,
     RANK() OVER (
-        ORDER BY sum(transactionrevenue)
+        ORDER BY sum(totaltransactionrevenue)
     )
 FROM all_sessions
 GROUP BY country
-HAVING sum(transactionrevenue) > 0
+HAVING sum(totaltransactionrevenue) > 0
 
 
 Answer:
-While the query was about to give a result to the question above, it is important to note that there is one value in the colummn of transactionrevenue. This being said, in a non-school situation, I would need to collect more data. Even looking into the accuracy of the transaction revenue of Sunnyvale the numbers don't seem to line up. More information is needed to give a truly correct result. 
 
-City : Sunnyvale 
-Transaction Revenue : 200000000 
+Cities
+    "New York","19590000","1"
+    "Chicago","123940000","2"
+    "Palo Alto","152000000","3"
+    "Mountain View","170990000","4"
+    "Sunnyvale","200000000","5"
+    "Seattle","358000000","6"
+    "San Francisco","398090000","7"
+    "Atlanta","742480000","8"
 
-Country : United States
-Transaction Revenue : 200000000
+Countries
+    "United States","2165090000","1"
+
 
 
 
@@ -115,7 +124,8 @@ ranked_categories_w_cities AS(
         city
 ),
 --- limit the results to only the top most ranked categories
-rank1_cities AS (
+ WITH
+ rank1_cities AS (
     SELECT DISTINCT ranked_categories_w_cities.rank,
         ranked_categories_w_cities.v2productcategory,
         ranked_categories_w_cities.city
@@ -286,82 +296,92 @@ Countries
 
 SQL Queries:
 
+-- Cities
 
 
-Answer:
+WITH -- replace null with 0
+tottransactionrev AS (
+    SELECT CASE
+            WHEN totaltransactionrevenue IS NULL THEN 0
+            ELSE totaltransactionrevenue
+        END as totaltransactionrevenue_noNULLS,
+        date
+    FROM all_sessions
+),
+-- find revenue impact from revenue and sentiment measurements
+rev_sentiment AS (
+    SELECT totaltransactionrevenue_noNULLS *(sentimentscore * sentimentmagnitude) asRevImpact,
+        productsku
+    FROM sales_report
+        JOIN all_sessions USING(productsku)
+        JOIN tottransactionrev USING(date)
+) -- total revenue impact by city
+SELECT DISTINCT city,
+    sum(asRevImpact) as impact_score
+FROM all_sessions
+    JOIN rev_sentiment USING(productsku)
+GROUP BY city
+ORDER BY sum(asRevImpact) DESC
 
-**Part 4 subquestions**
+---
 
-find all duplicate records
-
-SQL Queries:
-
-
-
-Answer:
-
-find the total number of unique visitors (`fullVisitorID`)
-
-SQL Queries:
-
-
-
-Answer:
-
-find the total number of unique visitors by referring sites
-
-SQL Queries:
-
-
-
-Answer:
-
-find each unique product viewed by each visitor
-
-SQL Queries:
+-- Countries
 
 
-
-Answer:
-compute the percentage of visitors to the site that actually makes a purchase
-
-SQL Queries:
-
-
-
-Answer:
-
-
-**Custom Question 1: What months are the most and least profitable?**
-
-SQL Queries:
-
-
-
-Answer:
-
-
-**Custom Question 2: Rank cities and countries from most profitable to least?**
-
-SQL Queries:
+WITH -- replace null with 0
+tottransactionrev AS (
+    SELECT CASE
+            WHEN totaltransactionrevenue IS NULL THEN 0
+            ELSE totaltransactionrevenue
+        END as totaltransactionrevenue_noNULLS,
+        date
+    FROM all_sessions
+),
+-- find revenue impact from revenue and sentiment measurements
+rev_sentiment AS (
+    SELECT totaltransactionrevenue_noNULLS *(sentimentscore * sentimentmagnitude) asRevImpact,
+        productsku
+    FROM sales_report
+        JOIN all_sessions USING(productsku)
+        JOIN tottransactionrev USING(date)
+) -- total revenue impact by country
+SELECT DISTINCT country,
+    sum(asRevImpact) as impact_score
+FROM all_sessions
+    JOIN rev_sentiment USING(productsku)
+GROUP BY country
+ORDER BY sum(asRevImpact) DESC
 
 
 
 Answer:
 
+The higher the impact score the high the impact that city or country has had on the total revenue
 
-**Custom Question 3: Does the cost of a product affect the likelyhood of it being purchased?**
+Cities
 
-SQL Queries:
+    "Sunnyvale",154680000
+    "San Francisco",121200000
+    "Mountain View",91800000
+    "Palo Alto",45900000
+    "San Jose",33480000
+    "Seattle",33480000
+    "Chicago",9915200.000000002
+    "New York",7052400.000000001
+    "Ann Arbor",0
+    "Detroit",0
+    "Dublin",0
+
+Sunnyvale has had the highest impact on revenue by a city
+
+---
+
+Countries
+
+    "United States",497507600
+    "Ireland",0
 
 
-
-Answer:
-
-
-
-
-
-
+The United States has had the highest impact on revenue by a country
 
 
