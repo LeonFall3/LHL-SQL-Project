@@ -28,11 +28,27 @@ Answer:
 
 
 
-Question 2: Rank cities and countries from most profitable to least
+Question 2: Rank cities from most profitable to least
 
 SQL Queries:
 
+SELECT city, RANK() OVER(ORDER BY sum(totaltransactionrevenue)DESC)
+FROM all_sessions
+GROUP BY city
+HAVING sum(totaltransactionrevenue)>0
+
+
 Answer:
+
+"Atlanta","1"
+"San Francisco","2"
+"Seattle","3"
+"Sunnyvale","4"
+"Mountain View","5"
+"Palo Alto","6"
+"Chicago","7"
+"New York","8"
+
 
 
 
@@ -40,7 +56,14 @@ Question 3: Does the cost of a product affect the likelyhood of it being purchas
 
 SQL Queries:
 
+SELECT v2productname, productprice, total_ordered
+FROM all_sessions
+JOIN sales_by_sku USING(productsku)
+Order By productprice DESC
+
 Answer:
+
+Based on the query above it would apear that lower cost items are not as often bought as higher priced items.
 
 
 

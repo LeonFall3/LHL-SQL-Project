@@ -118,6 +118,12 @@ WHERE v2productcategory IN ('(not set)', '${escCatTitle}')
 
 ---
 
+removing sales_report.name as it is doubling up on info that should only live in the products table
+
+ALTER TABLE sales_report
+DROP COLUMN name
+
+
 
 
 
